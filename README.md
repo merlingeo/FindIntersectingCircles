@@ -10,6 +10,7 @@
 .
 .
 .
-used<i> JavaScript , jQuery, Html, CSS </i>i>
+<br/>
+used <i> JavaScript , jQuery, Html, CSS </i>
 <br>
 <small><i>TODO: there is a corrdinate values didnot resolve acurately, but functionality works fine.</i></small>
