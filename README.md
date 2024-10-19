@@ -11,4 +11,4 @@
 .
 .
 
-<small><i>TODO: there is a small error in calculation, but functionality works fine.</i></small>
+<small><i>TODO: there is a corrdinate values didnot resolve acurately, but functionality works fine.</i></small>
