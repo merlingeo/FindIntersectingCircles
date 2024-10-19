@@ -3,94 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>MoreCircles</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <style>
-        body,#circle{
-            height: 100vh;
-            margin: 0;
+        body,.circle-container{
             width: 100vw;
+            height: 100vh;
+            margin: 0px;
+
         }
-        [id^='shape']{
+        .circle{
             position: absolute;
-            border: 2px solid rgb(153, 51, 51);
+            /* width: 200px;
+            height: 200px; */
+            border-radius: 50%;
+            border: 2px solid red;
         }
 
         .highlighted{
-            background-color: lightpink;
-            opacity: 0.5 ;
+            opacity: 0.5;
+            background-color: pink;
         }
-
-
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
-        var clickCoordinates =[];
-        
-        function getRandomIntInclusive() {
-            const minCeiled = 50;
-            const maxFloored = 350;
-            return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
-        }
+        var circlesArray=[];
+        document.addEventListener('click',function(){
 
-        document.addEventListener('click',()=>{
-            var randmDiameter = getRandomIntInclusive();
-            clickCoordinates.push({
-                x : event.clientX-(Math.round(randmDiameter/2)),
-                y : event.clientY-(Math.round(randmDiameter/2)),
-                r : Math.round(randmDiameter/2),
-                sId:clickCoordinates.length+1
+            x =event.clientX;
+            y=event.clientY;
+
+            createCircle(x,y,randomRadiusGenerator);
+
+
+        })
+        
+        function createCircle(posX,posY,newRadius){
+            let r= newRadius();
+            let circleId = circlesArray.length;
+
+
+            $('.circle-container').append(`<div class="circle" id='circle${circleId}'></div>`)
+
+            $(`#circle${circleId}`).css({
+                height : 2*r+'px',
+                width : 2*r,
+                left: (posX - r)+'px',
+                top:(posY - r)+'px',
             })
 
-            let shapeId = clickCoordinates.length;
-            $('#circle').append("<div id='shape"+clickCoordinates.length+"'></div>")
-            $(`#shape${shapeId}`).css({
-                'left' : `${clickCoordinates[shapeId-1].x}px`,
-                'top' : `${clickCoordinates[shapeId-1].y}px`,
-                'height': randmDiameter+'px',
-                'width': randmDiameter+'px',
-                'border-radius': randmDiameter+'px'
-            });
-            if (clickCoordinates.length >1) checkOverlapping();
-        })
-
-        function checkOverlapping(){
-            console.log('inside');
-            
-            for (let i = 0; i < clickCoordinates.length; i++) {
-                // const element = clickCoordinates[i];
-                console.log('i');
-                
-                for (let j = i+1; j < clickCoordinates.length; j++) {
-                    // const element = clickCoordinates[j];
-                    console.log('j');
-                    let sumOfRadius = clickCoordinates[i].r + clickCoordinates[j].r;
-                    let distanceBetween = Math.sqrt(
-
-                        Math.pow(clickCoordinates[i].x - clickCoordinates[j].x, 2) + 
-                        Math.pow(clickCoordinates[i].y - clickCoordinates[j].y, 2) 
-                        );
-
-                    console.log(sumOfRadius);
-
-                    console.log(distanceBetween);
-
-                    if (distanceBetween < sumOfRadius){
-                        console.log('intersecting',`#shape${clickCoordinates[i].sId}`);
-                        // $(`#shape${shapeId}`).css({});
-                        $(`#shape${clickCoordinates[i].sId},#shape${clickCoordinates[j].sId}`).addClass('highlighted');
-                    }
-                    
-                    
-                                                        
-                }
-                
+            let newCircleDet ={
+                x:posX - r,
+                y:posY - r, 
+                r:r,
+                id : circleId
             }
 
+            checkIntersecting(newCircleDet,circlesArray)  
+            
         }
-        
+
+        function checkIntersecting(newCircle, allOtherCircles){
+            
+            if(allOtherCircles.length <1){
+                allOtherCircles.push(newCircle);
+            }else{
+                allOtherCircles.forEach(element => {
+                    sumRadius = element.r +newCircle.r
+
+                    if(isIntersecting(element.x,element.y ,newCircle.x,newCircle.y,sumRadius)){
+                        $(`#circle${newCircle.id},#circle${element.id}`).addClass('highlighted');
+                    }
+
+                }); 
+                allOtherCircles.push(newCircle);         
+            }
+        }
+
+        function isIntersecting(x1,y1,x2,y2,radiusSum){
+            const dx = x1-x2;
+            const dy = y1-y2;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < radiusSum;
+        }
+        function randomRadiusGenerator(){
+            return Math.floor(Math.random()* 120) + 20;
+        }
     </script>
 </head>
 <body>
-    <div id="circle"></div>
+    <div class="circle-container">
+
+    </div>
 </body>
 </html>
